@@ -1,5 +1,7 @@
 from agents import Agent
 
+from AIAgentSpace.model_config import get_ai_model
+
 
 def create_young_explorer_writer_agent() -> Agent:
     """Create the Young Explorer Writer specialist agent."""
@@ -16,5 +18,5 @@ def create_young_explorer_writer_agent() -> Agent:
             "scale. Do not add unsupported facts. If the verified information is "
             "missing a measurement or source, say so simply instead of inventing it."
         ),
-        model="gpt-4o-mini",
+        model=get_ai_model(),
     )

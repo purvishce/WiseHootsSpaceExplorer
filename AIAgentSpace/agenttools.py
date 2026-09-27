@@ -5,7 +5,8 @@ from pathlib import Path
 from typing import Any
 
 import requests
-from agents import function_tool
+from agents import Agent, GuardrailFunctionOutput, RunContextWrapper, Runner, TResponseInputItem, function_tool
+from agents.decorators import input_guardrail, output_guardrail
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -36,6 +37,13 @@ from APIs.jpl_apis import (
     identify_small_bodies as jpl_identify_small_bodies,
     query_sbdb as jpl_query_sbdb,
 )
+from AIAgentSpace.input_checker_agent import create_input_checker_agent
+from AIAgentSpace.model_config import get_google_run_config
+from AIAgentSpace.output_checker_agent import create_output_checker_agent
+
+
+input_checker_agent = create_input_checker_agent()
+output_checker_agent = create_output_checker_agent()
 
 
 def _parse_extra_filters(extra_filters_json: str | None) -> dict[str, Any]:
@@ -55,6 +63,56 @@ def _compact_json(data: Any, max_chars: int = 3500) -> str:
     if len(text) <= max_chars:
         return text
     return text[:max_chars] + "\n... truncated ..."
+
+
+def _format_guardrail_output(output: Any) -> str:
+    if hasattr(output, "model_dump_json"):
+        return output.model_dump_json(indent=2)
+    if isinstance(output, str):
+        return output
+    return _compact_json(output)
+
+
+@input_guardrail(name="user_input_guardrail", run_in_parallel=False)
+async def user_input_guardrail(
+    ctx: RunContextWrapper[None],
+    agent: Agent,
+    message: str | list[TResponseInputItem],
+) -> GuardrailFunctionOutput:
+    """Reject first-turn user requests that are outside the NASA space newsroom scope."""
+    result = await Runner.run(
+        input_checker_agent,
+        message,
+        context=ctx.context,
+        run_config=get_google_run_config(),
+    )
+    final_output = result.final_output
+
+    return GuardrailFunctionOutput(
+        output_info=final_output,
+        tripwire_triggered=not final_output.is_space_related,
+    )
+
+
+@output_guardrail(name="kid_safe_output_guardrail")
+async def kid_safe_output_guardrail(
+    ctx: RunContextWrapper[None],
+    agent: Agent,
+    output: Any,
+) -> GuardrailFunctionOutput:
+    """Reject final output that is not appropriate for young readers."""
+    result = await Runner.run(
+        output_checker_agent,
+        _format_guardrail_output(output),
+        context=ctx.context,
+        run_config=get_google_run_config(),
+    )
+    final_output = result.final_output
+
+    return GuardrailFunctionOutput(
+        output_info=final_output,
+        tripwire_triggered=not final_output.is_kid_appropriate,
+    )
 
 
 @function_tool
@@ -716,6 +774,8 @@ class AsteroidExplorerAgentTools:
 class AgentTools:
     """Compatibility namespace containing all available OpenAI Agents SDK tools."""
 
+    user_input_guardrail = user_input_guardrail
+    kid_safe_output_guardrail = kid_safe_output_guardrail
     send_pushover = send_pushover
     fetch_nasa_apod = fetch_nasa_apod
     fetch_epic_images = fetch_epic_images

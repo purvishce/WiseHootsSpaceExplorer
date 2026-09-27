@@ -1,5 +1,7 @@
 from agents import Agent
 
+from AIAgentSpace.model_config import get_ai_model
+
 
 def create_space_quiz_agent() -> Agent:
     """Create the Space Quiz specialist agent."""
@@ -15,5 +17,5 @@ def create_space_quiz_agent() -> Agent:
             "the reader think about. Keep the quiz friendly, accurate, and suitable "
             "for a 9-year-old."
         ),
-        model="gpt-4o-mini",
+        model=get_ai_model(),
     )

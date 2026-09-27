@@ -1,0 +1,6 @@
+fastapi
+litellm
+openai-agents[litellm]
+python-dotenv
+requests
+uvicorn
