@@ -1,5 +1,6 @@
 import asyncio
 import sys
+import traceback
 from pathlib import Path
 from typing import Any
 
@@ -116,6 +117,16 @@ async def nasa_newsroom(request: NewsroomRequest) -> Any:
                 content={
                     "error": "kid_safety_check_failed",
                     "message": _output_guardrail_message(guardrail_error),
+                },
+            )
+        except Exception as exc:
+            traceback.print_exc()
+            return JSONResponse(
+                status_code=500,
+                content={
+                    "error": "internal_error",
+                    "message": str(exc),
+                    "type": type(exc).__name__,
                 },
             )
 
