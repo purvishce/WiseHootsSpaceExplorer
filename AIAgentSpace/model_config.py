@@ -2,6 +2,7 @@ import os
 
 
 DEFAULT_AI_MODEL = "gemini/gemini-3.5-flash-lite"
+DEFAULT_NEWSROOM_TIMEOUT_SECONDS = 600
 
 
 def configure_google_api_environment() -> None:
@@ -20,6 +21,16 @@ def get_ai_model() -> str:
     if model.startswith("gemini/"):
         return model
     return f"gemini/{model}"
+
+
+def get_newsroom_timeout_seconds() -> int:
+    """Return the configured newsroom timeout in seconds."""
+    raw_timeout = os.getenv("NEWSROOM_TIMEOUT_SECONDS", str(DEFAULT_NEWSROOM_TIMEOUT_SECONDS)).strip()
+    try:
+        timeout = int(raw_timeout)
+    except ValueError:
+        return DEFAULT_NEWSROOM_TIMEOUT_SECONDS
+    return timeout if timeout > 0 else DEFAULT_NEWSROOM_TIMEOUT_SECONDS
 
 
 def get_google_run_config():

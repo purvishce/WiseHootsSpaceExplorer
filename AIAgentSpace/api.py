@@ -18,11 +18,11 @@ if str(PROJECT_ROOT) not in sys.path:
 
 load_dotenv(PROJECT_ROOT / ".env")
 
-from AIAgentSpace.model_config import configure_google_api_environment, get_google_run_config
+from AIAgentSpace.model_config import configure_google_api_environment, get_google_run_config, get_newsroom_timeout_seconds
 from AIAgentSpace.newsroom_agent import create_nasa_space_newsroom_agent
 
 
-NEWSROOM_TIMEOUT_SECONDS = 300
+NEWSROOM_TIMEOUT_SECONDS = get_newsroom_timeout_seconds()
 
 configure_google_api_environment()
 set_tracing_disabled(True)
