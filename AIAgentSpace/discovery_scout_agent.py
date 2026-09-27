@@ -2,6 +2,7 @@ from agents import Agent
 
 from AIAgentSpace.asteroidexplorer_agenttools import AsteroidExplorerAgentTools
 from AIAgentSpace.imageexplorer_agenttools import ImageExplorerAgentTools
+from AIAgentSpace.model_config import get_ai_model
 
 
 def create_discovery_scout_agent() -> Agent:
@@ -24,7 +25,7 @@ def create_discovery_scout_agent() -> Agent:
             "idea, source used, why it may interest young readers, and useful "
             "image or data URLs when available."
         ),
-        model="gpt-4o-mini",
+        model=get_ai_model(),
         tools=[
             ImageExplorerAgentTools.fetch_nasa_apod,
             ImageExplorerAgentTools.search_nasa_media_library,

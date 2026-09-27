@@ -2,6 +2,7 @@ from agents import Agent
 
 from AIAgentSpace.asteroidexplorer_agenttools import AsteroidExplorerAgentTools
 from AIAgentSpace.imageexplorer_agenttools import ImageExplorerAgentTools
+from AIAgentSpace.model_config import get_ai_model
 
 
 def create_science_fact_checker_agent() -> Agent:
@@ -20,7 +21,7 @@ def create_science_fact_checker_agent() -> Agent:
             "Return exactly these sections: Verified facts, Unsupported claims, "
             "Important context, Confidence level."
         ),
-        model="gpt-4o-mini",
+        model=get_ai_model(),
         tools=[
             ImageExplorerAgentTools.fetch_nasa_apod,
             ImageExplorerAgentTools.search_nasa_media_library,
