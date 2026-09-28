@@ -38,7 +38,7 @@ from APIs.jpl_apis import (
     query_sbdb as jpl_query_sbdb,
 )
 from AIAgentSpace.input_checker_agent import create_input_checker_agent
-from AIAgentSpace.model_config import get_google_run_config
+from AIAgentSpace.model_config import get_openai_run_config
 from AIAgentSpace.output_checker_agent import create_output_checker_agent
 
 
@@ -84,7 +84,7 @@ async def user_input_guardrail(
         input_checker_agent,
         message,
         context=ctx.context,
-        run_config=get_google_run_config(),
+        run_config=get_openai_run_config(),
     )
     final_output = result.final_output
 
@@ -105,7 +105,7 @@ async def kid_safe_output_guardrail(
         output_checker_agent,
         _format_guardrail_output(output),
         context=ctx.context,
-        run_config=get_google_run_config(),
+        run_config=get_openai_run_config(),
     )
     final_output = result.final_output
 

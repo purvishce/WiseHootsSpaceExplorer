@@ -111,6 +111,7 @@ Create a `.env` file in the project root:
 
 ```bash
 OPENAI_API_KEY=your_openai_key
+OPENAI_MODEL=gpt-5.4-nano-2026-03-17
 NASA_API_KEY=your_nasa_key
 PUSHOVER_USER=optional_pushover_user
 PUSHOVER_TOKEN=optional_pushover_token

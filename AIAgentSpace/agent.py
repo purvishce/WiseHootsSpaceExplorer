@@ -13,13 +13,12 @@ if str(PROJECT_ROOT) not in sys.path:
 
 load_dotenv(PROJECT_ROOT / ".env")
 
-from AIAgentSpace.model_config import configure_google_api_environment, get_google_run_config, get_newsroom_timeout_seconds
+from AIAgentSpace.model_config import get_newsroom_timeout_seconds, get_openai_run_config
 from AIAgentSpace.newsroom_agent import create_nasa_space_newsroom_agent
 
 
 NEWSROOM_TIMEOUT_SECONDS = get_newsroom_timeout_seconds()
 
-configure_google_api_environment()
 set_tracing_disabled(True)
 
 
@@ -62,7 +61,7 @@ async def main():
                 Runner.run(
                     agent,
                     "Can you find two or three cool NASA space story ideas for kids?",
-                    run_config=get_google_run_config(),
+                    run_config=get_openai_run_config(),
                 ),
                 timeout=NEWSROOM_TIMEOUT_SECONDS,
             )
