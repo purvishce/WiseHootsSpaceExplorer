@@ -44,6 +44,7 @@ Use a project-root `.env` file:
 ```bash
 NASA_API_KEY=your_nasa_key
 OPENAI_API_KEY=your_openai_key
+OPENAI_MODEL=gpt-5.4-nano-2026-03-17
 ```
 
 `NASA_API_KEY` falls back to `DEMO_KEY`, but a real key is recommended because `DEMO_KEY` is rate-limited.

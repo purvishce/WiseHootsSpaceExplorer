@@ -1,6 +1,5 @@
 fastapi
-litellm
-openai-agents[litellm]
+openai-agents
 python-dotenv
 requests
 uvicorn

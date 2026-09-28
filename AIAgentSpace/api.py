@@ -6,6 +6,7 @@ from typing import Any
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
@@ -18,16 +19,26 @@ if str(PROJECT_ROOT) not in sys.path:
 
 load_dotenv(PROJECT_ROOT / ".env")
 
-from AIAgentSpace.model_config import configure_google_api_environment, get_google_run_config, get_newsroom_timeout_seconds
+from AIAgentSpace.model_config import get_newsroom_timeout_seconds, get_openai_run_config
 from AIAgentSpace.newsroom_agent import create_nasa_space_newsroom_agent
 
 
 NEWSROOM_TIMEOUT_SECONDS = get_newsroom_timeout_seconds()
 
-configure_google_api_environment()
 set_tracing_disabled(True)
 
 app = FastAPI(title="NASA Space Newsroom API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://wisehoots.ai",
+        "https://www.wisehoots.ai",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class NewsroomRequest(BaseModel):
@@ -88,7 +99,7 @@ async def nasa_newsroom(request: NewsroomRequest) -> Any:
                 Runner.run(
                     agent,
                     request.message,
-                    run_config=get_google_run_config(),
+                    run_config=get_openai_run_config(),
                 ),
                 timeout=NEWSROOM_TIMEOUT_SECONDS,
             )
