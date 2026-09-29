@@ -1,4 +1,5 @@
 import asyncio
+import os
 import sys
 import traceback
 from pathlib import Path
@@ -24,17 +25,35 @@ from AIAgentSpace.newsroom_agent import create_nasa_space_newsroom_agent
 
 
 NEWSROOM_TIMEOUT_SECONDS = get_newsroom_timeout_seconds()
+DEFAULT_CORS_ALLOWED_ORIGINS = [
+    "https://wisehoots.ai",
+    "https://www.wisehoots.ai",
+    "http://localhost:4321",
+    "http://127.0.0.1:4321",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
 
 set_tracing_disabled(True)
 
 app = FastAPI(title="NASA Space Newsroom API")
 
+
+def get_cors_allowed_origins() -> list[str]:
+    """Return comma-separated CORS origins or local/prod defaults."""
+    raw_origins = os.getenv("CORS_ALLOWED_ORIGINS", "").strip()
+    if not raw_origins:
+        return DEFAULT_CORS_ALLOWED_ORIGINS
+
+    origins = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+    return origins or DEFAULT_CORS_ALLOWED_ORIGINS
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://wisehoots.ai",
-        "https://www.wisehoots.ai",
-    ],
+    allow_origins=get_cors_allowed_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

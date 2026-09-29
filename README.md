@@ -113,11 +113,14 @@ Create a `.env` file in the project root:
 OPENAI_API_KEY=your_openai_key
 OPENAI_MODEL=gpt-5.4-nano-2026-03-17
 NASA_API_KEY=your_nasa_key
+CORS_ALLOWED_ORIGINS=http://localhost:4321,https://wisehoots.ai,https://www.wisehoots.ai
 PUSHOVER_USER=optional_pushover_user
 PUSHOVER_TOKEN=optional_pushover_token
 ```
 
 `NASA_API_KEY` falls back to `DEMO_KEY`, but a real NASA key is recommended because `DEMO_KEY` is rate-limited.
+
+`CORS_ALLOWED_ORIGINS` is optional. Use it when the browser app is hosted from a different origin than the API, such as an Astro dev server on `http://localhost:4321`.
 
 ## Run
 
